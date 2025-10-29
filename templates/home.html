@@ -1,11 +1,162 @@
-<html>
-    <body>
-        <form action="http://localhost:5000/home", method="post">
-            <p>Start a New Chat: </p>
-            <p><input type="text", name="query" placeholder="Ask Anything"></p>
-            <p><input type="submit" name="submit" id="" placeholder="yoo"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T2's BOT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .stars-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(20, 22, 34);
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .star {
+            position: absolute;
+            background: #FFF;
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        #stars1 { width: 1px; height: 1px; animation-duration: 150s; box-shadow: 788px 1056px #FFF, 1515px 1133px #FFF, 1667px 115px #FFF, 1852px 680px #FFF, 137px 1863px #FFF, 762px 1083px #FFF, 1930px 1851px #FFF, 193px 1580px #FFF, 1417px 1693px #FFF, 1184px 1779px #FFF, 1324px 341px #FFF, 1591px 1563px #FFF, 321px 378px #FFF, 848px 1215px #FFF, 1404px 173px #FFF, 1326px 1625px #FFF, 1339px 683px #FFF, 1269px 1289px #FFF, 1148px 1082px #FFF, 1392px 1452px #FFF, 532px 1259px #FFF, 149px 1475px #FFF, 968px 432px #FFF, 1500px 1756px #FFF, 936px 1803px #FFF, 1128px 1507px #FFF, 119px 104px #FFF, 582px 58px #FFF, 1037px 145px #FFF, 153px 1278px #FFF, 1587px 888px #FFF, 594px 145px #FFF, 344px 1461px #FFF, 1412px 1192px #FFF, 1108px 181px #FFF, 102px 1827px #FFF, 1693px 855px #FFF, 1849px 1126px #FFF, 175px 1228px #FFF; }
+        #stars2 { width: 2px; height: 2px; animation-duration: 100s; box-shadow: 1075px 162px #FFF, 715px 1860px #FFF, 1259px 1017px #FFF, 112px 107px #FFF, 1155px 1558px #FFF, 1531px 1198px #FFF, 1672px 119px #FFF, 1162px 505px #FFF, 1010px 1713px #FFF, 178px 1700px #FFF, 1746px 1318px #FFF, 1324px 1902px #FFF, 392px 1072px #FFF, 1544px 1819px #FFF, 1650px 1878px #FFF, 1758px 1008px #FFF, 1060px 1406px #FFF, 1218px 1059px #FFF, 1838px 127px #FFF, 332px 1060px #FFF, 1030px 1094px #FFF, 108px 1752px #FFF, 1272px 154px #FFF, 1729px 1332px #FFF, 1003px 1165px #FFF, 1918px 1538px #FFF, 246px 164px #FFF, 831px 152px #FFF, 1386px 633px #FFF, 1836px 209px #FFF; }
+        #stars3 { width: 3px; height: 3px; animation-duration: 50s; box-shadow: 1774px 1002px #FFF, 121px 1735px #FFF, 22px 196px #FFF, 1777px 469px #FFF, 1045px 1289px #FFF, 1865px 1150px #FFF, 1500px 311px #FFF, 936px 1957px #FFF, 1145px 569px #FFF, 1461px 1157px #FFF, 111px 873px #FFF, 133px 1006px #FFF, 1406px 170px #FFF, 116px 175px #FFF, 1811px 1456px #FFF; }
+        @keyframes floatUp { from { transform: translateY(100vh); } to { transform: translateY(-100vh); } }
+
+        .chat-container {
+            background-color: rgba(30, 33, 48, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #2a2e41;
+            /* The base box-shadow remains, our animation will add to it */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+
+            /* ★ NEW: Apply the pulsating animation */
+            animation: pulsateBorder 4s ease-in-out infinite;
+        }
+        
+        /* ★ NEW: The keyframe animation for the pulsating glow */
+        @keyframes pulsateBorder {
+            0%, 100% {
+                /* At start/end, the pink shadow is transparent and has no size */
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 
+                            0 0 0px rgba(244, 114, 182, 0);
+            }
+            50% {
+                /* At the peak, the pink shadow glows with a 20px blur */
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3),
+                            0 0 20px rgba(181, 116, 255, 0.7);
+            }
+        }
+
+        .animated-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .animated-title span {
+            display: inline-block;
+            position: relative;
+            background: linear-gradient(90deg, #4f46e5, #818cf8, #0ea5e9, #4f46e5);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 5px rgba(79, 70, 229, 0.5), 0 0 10px rgba(79, 70, 229, 0.5), 0 0 20px rgba(129, 140, 248, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: 
+                fadeInUp 0.5s forwards,
+                animateGradient 8s ease infinite,
+                pulseGlow 4s ease-in-out infinite;
+            animation-delay: calc(var(--i) * 0.1s);
+            transition: transform 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .animated-title span.space { width: 0.5em; }
+
+        .animated-title:hover span {
+            transform: translateY(-8px) scale(1.1);
+            text-shadow: 0 0 10px rgba(79, 70, 229, 0.8), 0 0 25px rgba(79, 70, 229, 0.8), 0 0 50px rgba(129, 140, 248, 0.6);
+        }
+
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes animateGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 5px rgba(79, 70, 229, 0.5), 0 0 10px rgba(79, 70, 229, 0.5), 0 0 20px rgba(129, 140, 248, 0.3); }
+            50% { text-shadow: 0 0 8px rgba(79, 70, 229, 0.7), 0 0 16px rgba(79, 70, 229, 0.7), 0 0 30px rgba(129, 140, 248, 0.5); }
+        }
+        
+        form { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        input[type="text"] { width: 100%; padding: 15px; border: 1px solid #444961; border-radius: 8px; font-size: 16px; font-family: inherit; background-color: #2a2e41; color: #e0e0e0; transition: border-color 0.3s, box-shadow 0.3s; }
+        input[type="text"]::placeholder { color: #777; }
+        input[type="text"]:focus { outline: none; border-color: #3c82f6; box-shadow: 0 0 0 3px rgba(60, 130, 246, 0.3); }
+        input[type="submit"] { background-color: #3c82f6; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; transition: background-color 0.3s ease; }
+        input[type="submit"]:hover { background-color: #5a9bff; }
+        .chat-container a { color: #5a9bff; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .chat-container a:hover { color: #8bbaff; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="stars-background">
+        <div id="stars1" class="star"></div>
+        <div id="stars2" class="star"></div>
+        <div id="stars3" class="star"></div>
+    </div>
+
+    <div class="chat-container">
+        <div class="animated-title" aria-label="T2's BOT">
+            <span style="--i:1">T</span>
+            <span style="--i:2">2</span>
+            <span style="--i:3">'</span>
+            <span style="--i:4">s</span>
+            <span class="space" style="--i:5"></span>
+            <span style="--i:6">B</span>
+            <span style="--i:7">O</span>
+            <span style="--i:8">T</span>
+        </div>
+
+        <form action="http://localhost:5000/home" method="post">
+            <input type="text" name="query" placeholder="Ask Anything...">
+            <input type="submit" name="submit" value="Send">
         </form>
+
         <a href="http://localhost:5000/chats">Previous Chats</a>
-    </body>
+    </div>
+
+</body>
 </html>

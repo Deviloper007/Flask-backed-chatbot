@@ -1,25 +1,240 @@
 <!DOCTYPE html>
-<html>
-    <body>
-        <div>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation (Dark Mode)</title>
+    <!-- Modern font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Global Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Dark gradient background */
+            background: linear-gradient(135deg, rgb(20, 22, 34) 0%, rgb(36, 40, 61) 100%);
+            color: #e0e0e0; /* Light text for readability */
+            display: flex;
+            flex-direction: column; /* Allow nav-links to sit below the chat */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- Main Chat Window Container --- */
+        .chat-window {
+            background-color: #1e2130; /* Deep charcoal background */
+            border-radius: 16px;
+            border: 1px solid #2a2e41; /* Subtle border */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Chat History Area --- */
+        .chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 30px;
+            padding-bottom: 100px; /* Make space for the input bar */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Dark theme scrollbar for Firefox */
+            scrollbar-width: thin;
+            scrollbar-color: #444961 #1e2130;
+        }
+
+        /* Dark theme scrollbar for WebKit browsers (Chrome, Safari) */
+        .chat-history::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-history::-webkit-scrollbar-track {
+            background: #1e2130; /* Track color matches chat window */
+            border-radius: 10px;
+        }
+        .chat-history::-webkit-scrollbar-thumb {
+            background: #444961; /* Thumb color */
+            border-radius: 10px;
+        }
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: #5a5f7d;
+        }
+
+        /* --- Individual Message Styling --- */
+        .message {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 80%;
+        }
+
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-top: 5px;
+            word-wrap: break-word;
+            font-size: 15px;
+            line-height: 1.4;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-meta {
+            font-size: 12px;
+            color: #888; /* Dimmed metadata */
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* --- ART: Alternating Message Colors --- */
+        /* Base color for non-client messages */
+        .message:not(.client-message) .message-content {
+            background-color: #2a2e41;
+            color: #e0e0e0;
+        }
+        /* Every second non-client message gets a different shade */
+        .message:not(.client-message):nth-of-type(even) .message-content {
+            background-color: #31364a;
+        }
+
+        /* Style for messages originating from 'client' */
+        .message.client-message {
+            align-items: flex-end;
+            margin-left: auto;
+        }
+
+        .message.client-message .message-content {
+            background-color: #3c82f6; /* Vibrant blue for user */
+            color: white;
+        }
+        
+        /* --- "No Convo" Message --- */
+        .no-convo {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+            background-color: rgba(42, 46, 65, 0.5); /* Semi-transparent dark bg */
+            border-radius: 8px;
+            margin: auto;
+        }
+
+        /* --- Input Area --- */
+        .chat-input {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1e2130;
+            padding: 20px 30px;
+            border-top: 1px solid #2a2e41; /* Subtle divider */
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-input input[type="text"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #444961;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            background-color: #2a2e41; /* Dark input field */
+            color: #e0e0e0; /* Light text */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .chat-input input[type="text"]:focus {
+            outline: none;
+            border-color: #3c82f6;
+            box-shadow: 0 0 0 3px rgba(60, 130, 246, 0.3); /* Subtle glow */
+        }
+
+        .chat-input input[type="submit"] {
+            background-color: #3c82f6; /* Vibrant blue button */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-input input[type="submit"]:hover {
+            background-color: #5a9bff; /* Lighter on hover */
+        }
+
+        /* --- Navigation Links --- */
+        .nav-links {
+            text-align: center;
+            margin-top: 25px; /* Pushed below the chat window */
+        }
+
+        .nav-links a {
+            color: #5a9bff; /* Brighter link color */
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #8bbaff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-window">
+        <div class="chat-history">
             {% if convo %}
                 {% for i in convo %}
-                    <div>
-                        <strong>{{i.time | safe}}</strong>
-                        <strong>{{i.client | safe}}</strong> {{i.message | safe}}
+                    <div class="message {% if i.client %}client-message{% endif %}">
+                        <div class="message-meta">
+                            <strong>{{i.time | safe}}</strong>
+                            {% if not i.client %}
+                                <strong>{{i.client_name or 'Response'}}</strong>
+                            {% endif %}
+                        </div>
+                        <div class="message-content">{{i.message | safe}}</div>
                     </div>
                 {% endfor %}
             {% else %}
-            <p>Dunno What Happened</p>
+                <p class="no-convo">The conversation awaits. Send a message to begin.</p>
             {% endif %}
         </div>
-        <form action="http://localhost:5000/home/conversation", method="post">
-            <p><input type="text", name="query" placeholder="Continue Conversation"></p>
-            <p><input type="submit" name="submit" id="" placeholder="yoo"></p>
 
-        </form>
-        <a href="http://localhost:5000/chats">Previous Chats</a>
+        <div class="chat-input">
+            <form action="http://localhost:5000/home/conversation" method="post" style="width: 100%; display: flex; align-items: center; gap: 15px;">
+                <input type="text" name="query" placeholder="Continue Conversation..." required>
+                <input type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <a href="http://localhost:5000/chats">Previous Chats</a> |
         <a href="http://localhost:5000/home">Start a New Conversation</a>
+    </div>
 
-    </body>
+</body>
 </html>

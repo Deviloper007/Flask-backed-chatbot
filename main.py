@@ -88,7 +88,7 @@ def conversation():
             with conn.cursor(dictionary=True) as cursor:
                 cursor.execute(sql,(fid,))
                 data = cursor.fetchall()
-            bot_input = "this is the previous conversation you had (ignore all the html tags or MD format you see, just focus on the content, also user: means the user and model: means what you responded during that conversations):-  "
+            bot_input = "this is the previous conversation you had (ignore all the html tags or MD format you see, just focus on the content, also user: and model: flags the start of the question and your response respectively, they were not part of the conversation they are just pointing the qquestion and response):-  "
             for dict in data:
                 for key, value in dict.items():
                     if key == 'client' or key == 'user':
@@ -171,20 +171,6 @@ def history():
 
 @app.route('/chats/<qid>')
 def solution(qid):
-
-    # try:
-    #     conn = get_db_connection()
-    #     data = None
-    #     with conn.cursor() as cursor:
-    #         cursor.execute("SELECT answer FROM chats WHERE id = %s", (qid,))
-    #         data = cursor.fetchone()
-            
-    #         html_content = markdown.markdown(data[0], extensions=['tables'])
-    # except Error as e:
-    #     print(f"Error: {e}")
-    #     data = []
-
-    # return render_template('solution.html', solution=html_content)
     session['fid'] = qid
     return redirect(url_for('conversation'))
 
