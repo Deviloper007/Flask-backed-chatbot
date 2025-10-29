@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div>
+            {% if convo %}
+                {% for i in convo %}
+                    <div>
+                        <strong>{{i.time | safe}}</strong>
+                        <strong>{{i.client | safe}}</strong> {{i.message | safe}}
+                    </div>
+                {% endfor %}
+            {% else %}
+            <p>Dunno What Happened</p>
+            {% endif %}
+        </div>
+        <form action="http://localhost:5000/home/conversation", method="post">
+            <p><input type="text", name="query" placeholder="Continue Conversation"></p>
+            <p><input type="submit" name="submit" id="" placeholder="yoo"></p>
+
+        </form>
+        <a href="http://localhost:5000/chats">Previous Chats</a>
+        <a href="http://localhost:5000/home">Start a New Conversation</a>
+
+    </body>
+</html>
